@@ -16,10 +16,12 @@ import java.util.List;
  * Date: 13-11-25
  * Time: 下午5:39
  */
-public class PriceAvg extends EvalFunc<Double>
+public class PriceAvg extends EvalFunc<Integer>
 {
 
-    public Double exec(Tuple input) throws IOException
+    private PriceLevel leveler = new PriceLevel();
+
+    public Integer exec(Tuple input) throws IOException
     {
         if (input == null || input.size() == 0)
             return null;
@@ -33,7 +35,11 @@ public class PriceAvg extends EvalFunc<Double>
             }
             double low = Double.parseDouble(strPrice.substring(0, indexDash));
             double high = Double.parseDouble(strPrice.substring(indexDash + 1));
-            return (low + high) / 2;
+            double avg = (low + high) / 2;
+            //only keep two decimal place
+            avg = (double) Math.round(avg * 100) / 100;
+
+            return leveler.getLevel(avg);
         }
         catch (Exception e)
         {
@@ -50,7 +56,7 @@ public class PriceAvg extends EvalFunc<Double>
      */
     public Schema outputSchema(Schema input)
     {
-        return new Schema(new Schema.FieldSchema(getSchemaName(this.getClass().getName().toLowerCase(), input), DataType.DOUBLE));
+        return new Schema(new Schema.FieldSchema(getSchemaName(this.getClass().getName().toLowerCase(), input), DataType.INTEGER));
     }
 
     /* (non-Javadoc)
