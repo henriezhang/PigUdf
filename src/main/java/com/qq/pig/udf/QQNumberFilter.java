@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 public class QQNumberFilter extends FilterFunc
 {
 
-    private Pattern idPattern = Pattern.compile("^\\d+$");
+    private Pattern idPattern = Pattern.compile("^\\d{5,}$");
 
 
     public Boolean exec(Tuple arg0) throws IOException

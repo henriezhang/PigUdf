@@ -13,8 +13,9 @@ public class RegexTest
 {
     public static void main(String[] args)
     {
-        Pattern urlPattern = Pattern.compile("^F?\\d+$");
-        Matcher matcher  = urlPattern.matcher("F0012");
+        Pattern urlPattern = Pattern.compile("^\\d{5,}$");
+
+        Matcher matcher = urlPattern.matcher("100111111112222");
 
         System.out.println(matcher.matches());
     }

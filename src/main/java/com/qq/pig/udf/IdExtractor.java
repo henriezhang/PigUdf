@@ -1,11 +1,11 @@
 package com.qq.pig.udf;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -78,24 +78,22 @@ public class IdExtractor
         {
             return null;
         }
-
         return url.substring(start, end);
-
     }
 
 
-    private String extractFromQueryString(String url)
+    private String extractFromUrlQueryString(String url)
     {
         int indexOfQuestionMark = url.indexOf("?");
         if (indexOfQuestionMark < 0)
         {
             return null;
         }
-        url = url.substring(indexOfQuestionMark + 1);
+        String queryStr = url.substring(indexOfQuestionMark + 1);
         String result;
         for (String key : QUERY_KEYS)
         {
-            result = extractFromQueryString(url, key);
+            result = extractFromQueryString(queryStr, key);
             if (result != null)
             {
                 return result;
@@ -104,12 +102,24 @@ public class IdExtractor
         return null;
     }
 
-    private String extractFromQueryString(String url, String name)
+    private String extractFromUrlQueryString(String url, String key)
     {
-        List<NameValuePair> paras = URLEncodedUtils.parse(url, UTF8);
+        int indexOfQuestionMark = url.indexOf("?");
+        if (indexOfQuestionMark < 0)
+        {
+            return null;
+        }
+        String queryStr = url.substring(indexOfQuestionMark + 1);
+
+        return extractFromQueryString(queryStr, key);
+    }
+
+    private String extractFromQueryString(String queryStr, String key)
+    {
+        List<NameValuePair> paras = URLEncodedUtils.parse(queryStr, UTF8);
         for (NameValuePair pair : paras)
         {
-            if (pair.getName().equals(name))
+            if (pair.getName().equals(key))
             {
                 return pair.getValue();
             }
@@ -117,7 +127,7 @@ public class IdExtractor
         return null;
     }
 
-    private String extractFromFragmentString(String url)
+    private String extractFromUrlFragmentString(String url)
     {
         int hashIndex = url.indexOf("#");
 
@@ -138,12 +148,24 @@ public class IdExtractor
         return null;
     }
 
-    private String extractFromFragmentString(String url, String name)
+    private String extractFromUrlFragmentString(String url, String key)
     {
-        List<NameValuePair> paras = URLEncodedUtils.parse(url, UTF8);
+        int hashIndex = url.indexOf("#");
+
+        if (hashIndex < 0)
+        {
+            return null;
+        }
+        String fragment = url.substring(hashIndex + 1);
+        return extractFromFragmentString(fragment, key);
+    }
+
+    private String extractFromFragmentString(String fragment, String key)
+    {
+        List<NameValuePair> paras = URLEncodedUtils.parse(fragment, UTF8);
         for (NameValuePair pair : paras)
         {
-            if (pair.getName().equals(name))
+            if (pair.getName().equals(key))
             {
                 return pair.getValue();
             }
@@ -151,14 +173,26 @@ public class IdExtractor
         return null;
     }
 
-    private void extractCarSerialId()
+    private String extractCarSerialId(String url)
     {
 
+        String id = extractFromPath(url);
+        if (id != null)
+        {
+            return id;
+        }
+        id = extractFromUrlQueryString(url);
+        if (id != null)
+        {
+            return id;
+        }
+        id = extractFromUrlFragmentString(url);
+        return id;
     }
 
     private String extractBrandId(String url)
     {
-        return extractFromQueryString(url, BRAND_ID);
+        return extractFromUrlQueryString(url, BRAND_ID);
     }
 
     private List<String> extractCarTypeId(String url)
@@ -173,7 +207,12 @@ public class IdExtractor
             return result;
         }
 
-        id = extractFromFragmentString(url, CMPSTR);
+        id = extractFromUrlFragmentString(url, CMPSTR);
+
+        if (id == null)
+        {
+            return null;
+        }
 
         if (id.indexOf(",") > 0)
         {
@@ -190,72 +229,92 @@ public class IdExtractor
         {
             result.add(id);
         }
+
         return result;
     }
 
-
-    public List<String> extractId(String url)
+    public List<List<String>> extractId(String url)
     {
-        List<String> result = Lists.newArrayList();
 
-        String id = extractFromPath(url);
-        if (id != null)
+        List<String> carTypeids = extractCarTypeId(url);
+        String carSerialId = extractCarSerialId(url);
+        String carBrandId = extractBrandId(url);
+
+        List<List<String>> result = Lists.newArrayList();
+        if (carTypeids == null || carTypeids.size() == 0)
         {
-            result.add(id);
-            return result;
+            List<String> item = Lists.newArrayList();
+            item.add(carBrandId);
+            item.add(carSerialId);
+            item.add(null);
+
+            result.add(item);
         }
-        id = extractFromQueryString(url);
-        if (id != null)
+        else
         {
-            result.add(id);
-            return result;
-        }
-        id = extractFromFragmentString(url);
-        if (id != null)
-        {
-            if (id.indexOf(",") > 0)
+            for (String carTypeId : carTypeids)
             {
-                String[] ids = id.split(",");
-                for (String item : ids)
-                {
-                    if (!item.equals("0"))
-                    {
-                        result.add(item);
-                    }
-                }
+                List<String> item = Lists.newArrayList();
+                Preconditions.checkState(carBrandId == null);
+                Preconditions.checkState(carSerialId == null);
+                item.add(carBrandId); //should be null
+                item.add(carSerialId);//should be null
+                item.add(carTypeId);
+
+                result.add(item);
             }
-            else
-            {
-                result.add(id);
-            }
-            return result;
         }
+
         return result;
+
     }
 
+//
+//    public List<String> extractId(String url)
+//    {
+//        List<String> result = Lists.newArrayList();
+//
+//        String id = extractFromPath(url);
+//        if (id != null)
+//        {
+//            result.add(id);
+//            return result;
+//        }
+//        id = extractFromQueryString(url);
+//        if (id != null)
+//        {
+//            result.add(id);
+//            return result;
+//        }
+//        id = extractFromUrlFragmentString(url);
+//
+//        result.add(id);
+//        return result;
+//    }
+//
 
-    public static class Pair<K, V>
-    {
-        private K left;
-        private V right;
-
-
-        public Pair(K left, V right)
-        {
-            this.left = left;
-            this.right = right;
-        }
-
-        public K getLeft()
-        {
-            return left;
-        }
-
-        public V getRight()
-        {
-            return right;
-        }
-    }
+//    public static class Pair<K, V>
+//    {
+//        private K left;
+//        private V right;
+//
+//
+//        public Pair(K left, V right)
+//        {
+//            this.left = left;
+//            this.right = right;
+//        }
+//
+//        public K getLeft()
+//        {
+//            return left;
+//        }
+//
+//        public V getRight()
+//        {
+//            return right;
+//        }
+//    }
 
 
 }

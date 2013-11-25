@@ -35,16 +35,32 @@ public class ExtractIds extends EvalFunc<DataBag>
         {
             DataBag output = DefaultBagFactory.getInstance().newDefaultBag();
             String url = (String) input.get(0);
-            List<String> ids = extractor.extractId(url);
-            for (String id : ids)
+            List<List<String>> ids = extractor.extractId(url);
+            for (List<String> id : ids)
             {
-                Matcher matcher = digitPattern.matcher(id);
-                if (!matcher.matches())
+                Tuple t = TupleFactory.getInstance().newTuple(3);
+                int index = 0;
+                for (String type : id)
                 {
-                    return null;
+                    if (type == null)
+                    {
+                        t.set(index, type);
+                    }
+                    else
+                    {
+                        Matcher matcher = digitPattern.matcher(type);
+                        if (!matcher.matches())
+                        {
+                            t.set(index, null);
+                        }
+                        else
+                        {
+                            t.set(index, type);
+                        }
+                    }
+
+                    index++;
                 }
-                Tuple t = TupleFactory.getInstance().newTuple(1);
-                t.set(0, id);
                 output.add(t);
             }
             return output;
@@ -65,7 +81,9 @@ public class ExtractIds extends EvalFunc<DataBag>
     public Schema outputSchema(Schema input)
     {
         Schema bagSchema = new Schema();
-        bagSchema.add(new Schema.FieldSchema("id", DataType.CHARARRAY));
+        bagSchema.add(new Schema.FieldSchema("brandid", DataType.CHARARRAY));
+        bagSchema.add(new Schema.FieldSchema("carserialid", DataType.CHARARRAY));
+        bagSchema.add(new Schema.FieldSchema("cartypeid", DataType.CHARARRAY));
         try
         {
             return new Schema(new Schema.FieldSchema(getSchemaName(this.getClass().getName().toLowerCase(), input),
