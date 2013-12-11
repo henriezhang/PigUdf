@@ -22,6 +22,12 @@ import java.util.regex.Pattern;
 public class NBAFilter extends FilterFunc
 {
 
+    private double threshold;
+
+    public NBAFilter(String threshold)
+    {
+        this.threshold = Double.parseDouble(threshold);
+    }
 
     public Boolean exec(Tuple arg0) throws IOException
     {
@@ -57,23 +63,23 @@ public class NBAFilter extends FilterFunc
             boolean found = false;
             for (int i = 0; i < tmps.length - 1; i++)
             {
-                if (tmps[i].equalsIgnoreCase("nba"))
+                if (tmps[i].indexOf("nba") > 0)
                 {
                     found = true;
                     break;
                 }
 
             }
-                if (found)
+            if (found)
+            {
+
+                if (Double.valueOf(tmps[tmps.length - 1]) > threshold)
                 {
-
-                    if (Double.valueOf(tmps[tmps.length - 1]) > 0.6)
-                    {
-                        return true;
-                    }
-
+                    return true;
                 }
+
             }
+        }
 
         return false;
     }

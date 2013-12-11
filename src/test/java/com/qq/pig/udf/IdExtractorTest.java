@@ -153,12 +153,21 @@ public class IdExtractorTest extends TestCase
         result.clear();
         result.add(expected);
         equal(result, extractor.extractId(url));
+
         url = "http://data.auto.qq.com/piclib/index.shtml#sid=212\n";
         init(expected);
         expected.set(1, "212");
         result.clear();
         result.add(expected);
         equal(result, extractor.extractId(url));
+
+        url = "/car_serial/864/index.shtml";
+        init(expected);
+        expected.set(1,"864");
+        result.clear();
+        result.add(expected);
+        equal(result, extractor.extractId(url));
+
 
 
     }
