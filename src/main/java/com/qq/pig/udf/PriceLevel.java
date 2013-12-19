@@ -15,32 +15,29 @@ import java.util.List;
 public class PriceLevel
 {
     private static final List<Long> prices;
+    private static final long min;
+    private static final long max;
 
     static
     {
         prices = Lists.newArrayList();
         prices.add(5l);//1
-        prices.add(10l);//2
-        prices.add(15l);//3
+        prices.add(10l);//1
         prices.add(20l);//4
-        prices.add(25l);//5
         prices.add(30l);//6
-        prices.add(35l);//7
-        prices.add(40l);//8
-        prices.add(45l);//9
-        prices.add(50l);//10
-        prices.add(60l);//11
-        prices.add(70l);//12
-        prices.add(80l);//13
-        prices.add(90l);//14
-        prices.add(100l);//15
-        prices.add(Long.MAX_VALUE);
+
+        min = prices.get(0);
+        max = prices.get(prices.size() - 1);
 
     }
 
 
     public int getLevel(double price)
     {
+        if (price < min || price > max)
+        {
+            return -1;
+        }
         int level = 0;
         for (Long item : prices)
         {
@@ -48,11 +45,8 @@ public class PriceLevel
             {
                 break;
             }
-
             level++;
         }
-        return level + 1;
-
+        return level;
     }
-
 }

@@ -20,6 +20,7 @@ import java.util.List;
 public class ChannelColumn extends EvalFunc<DataBag>
 {
 
+
     public DataBag exec(Tuple input) throws IOException
     {
         if (input == null || input.size() == 0)
@@ -32,6 +33,7 @@ public class ChannelColumn extends EvalFunc<DataBag>
             String url = (String) input.get(0);
 
             Iterable<String> interests = Splitter.on(",").split(url);
+
             for (String interest : interests)
             {
                 int index = interest.lastIndexOf(":");
@@ -78,7 +80,8 @@ public class ChannelColumn extends EvalFunc<DataBag>
 
     /* (non-Javadoc)
      * @see org.apache.pig.EvalFunc#getArgToFuncMapping()
-     * This is needed to make sure that both bytearrays and chararrays can be passed as arguments
+     * This is needed to make sure that both
+     * bytearrays and chararrays can be passed as arguments
      */
     @Override
     public List<FuncSpec> getArgToFuncMapping() throws FrontendException
