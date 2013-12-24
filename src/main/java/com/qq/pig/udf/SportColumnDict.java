@@ -2,10 +2,12 @@ package com.qq.pig.udf;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
@@ -16,7 +18,7 @@ import java.util.List;
 public class SportColumnDict
 {
 
-    private static Multimap<String, String> columnDict = ArrayListMultimap.create();
+    private static final Multimap<String, String> columnDict = ArrayListMultimap.create();
 
     static
     {
@@ -112,8 +114,8 @@ public class SportColumnDict
         columnDict.put("run", "run");
     }
 
-
-    private static List<String> columns = Lists.newArrayList();
+    private static final List<String> columns = Lists.newArrayList();
+    private static final Map<String, Integer> columnPositionMap = Maps.newHashMap();
 
     static
     {
@@ -125,7 +127,7 @@ public class SportColumnDict
         columns.add("nba");
         columns.add("lottery");
         columns.add("chess");
-        columns.add("Racing");
+        columns.add("racing");
         columns.add("tennis");
         columns.add("xijia");
         columns.add("yingc");
@@ -141,12 +143,19 @@ public class SportColumnDict
         columns.add("otherszjj");
         columns.add("volleyball");
         columns.add("badminton");
-        columns.add("Fargo");
-        columns.add("Athletics");
+        columns.add("fargo");
+        columns.add("athletics");
         columns.add("electronic");
         columns.add("gaoerfu");
         columns.add("equestrian");
         columns.add("run");
+
+        int index = 0;
+        for (String column : columns)
+        {
+            columnPositionMap.put(column, index++);
+        }
+
     }
 
 
@@ -158,6 +167,11 @@ public class SportColumnDict
     public List<String> getColumns()
     {
         return columns;
+    }
+
+    public Integer getColumnPos(String column)
+    {
+        return columnPositionMap.get(column);
     }
 
     public static void main(String[] args)

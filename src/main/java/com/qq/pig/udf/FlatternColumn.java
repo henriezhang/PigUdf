@@ -1,15 +1,14 @@
 package com.qq.pig.udf;
 
-import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import com.google.common.base.Throwables;
 import org.apache.pig.EvalFunc;
-import org.apache.pig.data.*;
-import org.apache.pig.impl.logicalLayer.FrontendException;
-import org.apache.pig.impl.logicalLayer.schema.Schema;
+import org.apache.pig.data.DataBag;
+import org.apache.pig.data.Tuple;
+import org.apache.pig.data.TupleFactory;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
+import java.util.Iterator;
 
 /**
  * Created with IntelliJ IDEA.
@@ -17,53 +16,61 @@ import java.util.List;
  * Date: 13-11-12
  * Time: 下午4:49
  */
-public class FlatternColumn extends EvalFunc<DataBag>
+public class FlatternColumn extends EvalFunc<Tuple>
 {
-
-    private Splitter commaSplitter = Splitter.on(",");
     private SportColumnDict dict = new SportColumnDict();
-    private ColumnParser parser = new ColumnParser();
-    private static final String SPORTS = "sports";
+    private int count = dict.getColumns().size();
 
-
-    public DataBag exec(Tuple input) throws IOException
+    public Tuple exec(Tuple input) throws IOException
     {
         if (input == null || input.size() == 0)
-        {
             return null;
-        }
+
         try
         {
-            DataBag output = DefaultBagFactory.getInstance().newDefaultBag();
-            String columnStr = (String) input.get(0);
-            if (Strings.isNullOrEmpty(columnStr))
+            Tuple output = TupleFactory.getInstance().newTuple(count);
+            DataBag dataBag = (DataBag) input.get(0);
+            if (dataBag == null)
             {
                 return null;
             }
-            List<String> columns = parser.parseColumns(columnStr);
-            if (columns.size() == 0 || !columns.get(0).equals(SPORTS))//only accept sports column
+            Utils.populateWithZero(output);
+
+            Iterator<Tuple> iterator = dataBag.iterator();
+            while (iterator.hasNext())
             {
-                return null;
-            }
-            int index = 1;//skip first column : sports
-            for (; index < columns.size(); index++)
-            {
-                String column = columns.get(index);
-                Collection<String> mappedColumns = dict.getMappedColumn(column);
-                for (String mappedColumn : mappedColumns)
+                Tuple tuple = iterator.next();
+                if (tuple.size() < 3)
+                    continue;
+                String columnName = (String) tuple.get(1);
+                Double interest = (Double) tuple.get(2);
+                if (Strings.isNullOrEmpty(columnName) || interest == null)
+                    continue;
+                Integer position = dict.getColumnPos(columnName);
+                if (position == null)
                 {
-                    Tuple t = TupleFactory.getInstance().newTuple(1);
-                    t.set(0, mappedColumn);
-                    output.add(t);
+                    throw new RuntimeException(columnName + " doesn't exist in dictionary");
                 }
+                if (interest == null)
+                {
+                    throw new RuntimeException(columnName + " interest is null");
+                }
+                int normalizeInterest = scaleToInt(interest);
+                output.set(position, normalizeInterest);
             }
             return output;
         }
         catch (Exception e)
         {
-            System.err.println("ExtractChannelBag: failed to process input; error - " + e.getMessage() /*+ "," + Throwables.getStackTraceAsString(e)*/);
+            System.err.println("ExtractChannelBag: failed to process input; error - " + e.getMessage() + "," + Throwables.getStackTraceAsString(e));
             return null;
         }
+    }
+
+
+    private int scaleToInt(double interest)
+    {
+        return (int) Math.round(interest * 100);
     }
 
 //    private void populateWithZero(Tuple tuple) throws ExecException
@@ -103,20 +110,20 @@ public class FlatternColumn extends EvalFunc<DataBag>
      * @param input - schema of the input data
      * @return schema of the input data
      */
-    public Schema outputSchema(Schema input)
-    {
-        Schema bagSchema = new Schema();
-        bagSchema.add(new Schema.FieldSchema("column", DataType.CHARARRAY));
-        try
-        {
-            return new Schema(new Schema.FieldSchema(getSchemaName(this.getClass().getName().toLowerCase(), input),
-                    bagSchema, DataType.BAG));
-        }
-        catch (FrontendException e)
-        {
-            return null;
-        }
-    }
+//    public Schema outputSchema(Schema input)
+//    {
+//        Schema bagSchema = new Schema();
+//        bagSchema.add(new Schema.FieldSchema("column", DataType.CHARARRAY));
+//        try
+//        {
+//            return new Schema(new Schema.FieldSchema(getSchemaName(this.getClass().getName().toLowerCase(), input),
+//                    bagSchema, DataType.BAG));
+//        }
+//        catch (FrontendException e)
+//        {
+//            return null;
+//        }
+//    }
 
     /* (non-Javadoc)
      * @see org.apache.pig.EvalFunc#getArgToFuncMapping()

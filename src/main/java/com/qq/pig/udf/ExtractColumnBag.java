@@ -3,6 +3,7 @@ package com.qq.pig.udf;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
+import com.google.common.collect.Sets;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.data.*;
 import org.apache.pig.impl.logicalLayer.FrontendException;
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created with IntelliJ IDEA.
@@ -39,14 +41,10 @@ public class ExtractColumnBag extends EvalFunc<DataBag>
             DataBag output = DefaultBagFactory.getInstance().newDefaultBag();
             String columnStr = (String) input.get(0);
             if (Strings.isNullOrEmpty(columnStr))
-            {
                 return null;
-            }
             List<String> columns = parser.parseColumns(columnStr);
             if (columns.size() == 0 || !columns.get(0).equals(SPORTS))//only accept sports column
-            {
                 return null;
-            }
             int index = 1;//skip first column : sports
             for (; index < columns.size(); index++)
             {

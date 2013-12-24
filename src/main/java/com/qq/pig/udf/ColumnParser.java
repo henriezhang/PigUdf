@@ -22,18 +22,14 @@ public class ColumnParser
 
     public List<String> parseColumns(String col)
     {
-
-
         int index = col.indexOf("L.");
         if (index < 0)
-        {
             return EMPTY;
-        }
+
         int endPos = col.indexOf("_", index + 2);
         if (endPos < 0)
-        {
             return EMPTY;
-        }
+
         String colStr = col.substring(index + 2, endPos);
         return splitter.splitToList(colStr);
     }

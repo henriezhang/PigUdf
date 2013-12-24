@@ -2,7 +2,6 @@ package com.qq.pig.udf;
 
 import com.google.common.base.Splitter;
 import org.apache.pig.EvalFunc;
-import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
 
@@ -22,8 +21,8 @@ public class ExtractChannel2 extends EvalFunc<Tuple>
     private int channelCount;
 
     public ExtractChannel2()
-    {
-        dic = new ChannelSiteDict();
+    {        dic = new ChannelSiteDict();
+
         channelCount = dic.channelCount();
     }
 
@@ -40,7 +39,7 @@ public class ExtractChannel2 extends EvalFunc<Tuple>
         try
         {
             Tuple t = TupleFactory.getInstance().newTuple(channelCount);
-            populateWithZero(t);
+            Utils.populateWithZero(t);
             String channelInterestStr = (String) input.get(0);
             Iterable<String> iterable = commaSplitter.split(channelInterestStr);
             for (String channelInterest : iterable)
@@ -69,14 +68,6 @@ public class ExtractChannel2 extends EvalFunc<Tuple>
     public static int getWeight(String channelInterest, int index)
     {
         return Math.round((Float.valueOf(channelInterest.substring(index + 1))) * 100);
-    }
-
-    private void populateWithZero(Tuple tuple) throws ExecException
-    {
-        for (int i = 0; i < channelCount; i++)
-        {
-            tuple.set(i, 0);
-        }
     }
 
 
