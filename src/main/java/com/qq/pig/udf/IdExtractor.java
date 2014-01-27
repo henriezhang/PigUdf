@@ -235,7 +235,6 @@ public class IdExtractor
 
     public List<List<String>> extractId(String url)
     {
-
         List<String> carTypeids = extractCarTypeId(url);
         String carSerialId = extractCarSerialId(url);
         String carBrandId = extractBrandId(url);

@@ -2,6 +2,7 @@ package com.qq.pig.udf;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import com.google.common.base.Throwables;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.FuncSpec;
 import org.apache.pig.data.*;
@@ -18,14 +19,14 @@ import java.util.List;
  * Date: 13-11-12
  * Time: 下午4:49
  */
-public class ExtractChannel extends EvalFunc<DataBag>
+public class ExtractChannelSummary extends EvalFunc<DataBag>
 {
 
     private ChannelSiteDict dic = new ChannelSiteDict();
 
     private int channelCount;
 
-    public ExtractChannel()
+    public ExtractChannelSummary()
     {
         channelCount = dic.channelCount();
     }
@@ -62,8 +63,12 @@ public class ExtractChannel extends EvalFunc<DataBag>
                 {
                     continue;
                 }
-                Tuple t = TupleFactory.getInstance().newTuple(1);
+
+                int weight = ExtractChannel2.getWeight(channelInterest, index);
+
+                Tuple t = TupleFactory.getInstance().newTuple(2);
                 t.set(0, channel);
+                t.set(1, weight);
 
                 output.add(t);
             }
@@ -71,7 +76,7 @@ public class ExtractChannel extends EvalFunc<DataBag>
         }
         catch (Exception e)
         {
-            System.err.println("NGramGenerator: failed to process input; error - " + e.getMessage());
+            System.err.println("ExtractChannelSummary: failed to process input; error - " + e.getMessage() + "," + Throwables.getStackTraceAsString(e));
             return null;
         }
     }
@@ -107,6 +112,7 @@ public class ExtractChannel extends EvalFunc<DataBag>
     {
         Schema bagSchema = new Schema();
         bagSchema.add(new Schema.FieldSchema("channel", DataType.CHARARRAY));
+        bagSchema.add(new Schema.FieldSchema("weight", DataType.INTEGER));
         try
         {
             return new Schema(new Schema.FieldSchema(getSchemaName(this.getClass().getName().toLowerCase(), input),
@@ -117,17 +123,17 @@ public class ExtractChannel extends EvalFunc<DataBag>
             return null;
         }
     }
-
-    /* (non-Javadoc)
-     * @see org.apache.pig.EvalFunc#getArgToFuncMapping()
-     * This is needed to make sure that both bytearrays and chararrays can be passed as arguments
-     */
-    @Override
-    public List<FuncSpec> getArgToFuncMapping() throws FrontendException
-    {
-        List<FuncSpec> funcList = new ArrayList<FuncSpec>();
-        funcList.add(new FuncSpec(this.getClass().getName(), new Schema(new Schema.FieldSchema(null, DataType.CHARARRAY))));
-
-        return funcList;
-    }
+//
+//    /* (non-Javadoc)
+//     * @see org.apache.pig.EvalFunc#getArgToFuncMapping()
+//     * This is needed to make sure that both bytearrays and chararrays can be passed as arguments
+//     */
+//    @Override
+//    public List<FuncSpec> getArgToFuncMapping() throws FrontendException
+//    {
+//        List<FuncSpec> funcList = new ArrayList<FuncSpec>();
+//        funcList.add(new FuncSpec(this.getClass().getName(), new Schema(new Schema.FieldSchema(null, DataType.CHARARRAY))));
+//
+//        return funcList;
+//    }
 }

@@ -1,5 +1,6 @@
 package com.qq.pig.udf;
 
+import com.google.common.base.Throwables;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.FuncSpec;
 import org.apache.pig.data.*;
@@ -43,7 +44,7 @@ public class PriceAvg extends EvalFunc<Integer>
         }
         catch (Exception e)
         {
-            System.err.println("NGramGenerator: failed to process input; error - " + e.getMessage());
+            System.err.println("Price Avg: failed to process input; error - " + Throwables.getStackTraceAsString(e));
             return null;
         }
     }

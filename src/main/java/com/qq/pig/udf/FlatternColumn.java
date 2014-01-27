@@ -55,7 +55,7 @@ public class FlatternColumn extends EvalFunc<Tuple>
                 {
                     throw new RuntimeException(columnName + " interest is null");
                 }
-                int normalizeInterest = scaleToInt(interest);
+                int normalizeInterest = Utils.roundUpToInt(interest.floatValue());
                 output.set(position, normalizeInterest);
             }
             return output;
@@ -68,10 +68,10 @@ public class FlatternColumn extends EvalFunc<Tuple>
     }
 
 
-    private int scaleToInt(double interest)
-    {
-        return (int) Math.round(interest * 100);
-    }
+//    private int scaleToInt(double interest)
+//    {
+//        return (int) Math.round(interest * 100);
+//    }
 
 //    private void populateWithZero(Tuple tuple) throws ExecException
 //    {

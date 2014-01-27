@@ -41,12 +41,13 @@ public class ExtractChannelBag extends EvalFunc<DataBag>
 
                 String channel = channelInterest.substring(0, index);
                 String weight = channelInterest.substring(index + 1);
+                int weightInt =  Utils.roundUpToInt(Float.valueOf(weight));
                 if (channel.length() == 0)
                     continue;
 
                 Tuple t = TupleFactory.getInstance().newTuple(2);
                 t.set(0, channel);
-                t.set(1, weight);
+                t.set(1, weightInt);
                 output.add(t);
 
             }
@@ -100,7 +101,7 @@ public class ExtractChannelBag extends EvalFunc<DataBag>
     {
         Schema bagSchema = new Schema();
         bagSchema.add(new Schema.FieldSchema("channel", DataType.CHARARRAY));
-        bagSchema.add(new Schema.FieldSchema("weight", DataType.CHARARRAY));
+        bagSchema.add(new Schema.FieldSchema("weight", DataType.INTEGER));
         try
         {
             return new Schema(new Schema.FieldSchema(getSchemaName(this.getClass().getName().toLowerCase(), input),

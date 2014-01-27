@@ -187,7 +187,7 @@ public class ChannelSiteDict
         return channels.size();
     }
 
-    public int getPos(String channel)
+    public Integer getPos(String channel)
     {
         return channelPos.get(channel);
     }

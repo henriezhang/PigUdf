@@ -1,6 +1,8 @@
 package com.qq.pig.udf;
 
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
+import com.google.common.base.Throwables;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
@@ -15,14 +17,12 @@ import java.io.IOException;
  */
 public class ExtractChannel2 extends EvalFunc<Tuple>
 {
-
     private ChannelSiteDict dic;
-
     private int channelCount;
 
     public ExtractChannel2()
-    {        dic = new ChannelSiteDict();
-
+    {
+        dic = new ChannelSiteDict();
         channelCount = dic.channelCount();
     }
 
@@ -30,8 +30,6 @@ public class ExtractChannel2 extends EvalFunc<Tuple>
 
     public Tuple exec(Tuple input) throws IOException
     {
-
-
         if (input == null || input.size() == 0)
         {
             return null;
@@ -41,6 +39,10 @@ public class ExtractChannel2 extends EvalFunc<Tuple>
             Tuple t = TupleFactory.getInstance().newTuple(channelCount);
             Utils.populateWithZero(t);
             String channelInterestStr = (String) input.get(0);
+            if (Strings.isNullOrEmpty(channelInterestStr))
+            {
+                return null;
+            }
             Iterable<String> iterable = commaSplitter.split(channelInterestStr);
             for (String channelInterest : iterable)
             {
@@ -50,24 +52,26 @@ public class ExtractChannel2 extends EvalFunc<Tuple>
                 String channel = channelInterest.substring(0, index);
                 if (channel.length() == 0)
                     continue;
-
                 int weight = getWeight(channelInterest, index);
-
-                int pos = dic.getPos(channel);
+                Integer pos = dic.getPos(channel);
+                if (pos == null)
+                    continue;
                 t.set(pos, weight);
             }
             return t;
         }
         catch (Exception e)
         {
-            System.err.println("NGramGenerator: failed to process input; error - " + e.getMessage());
+            System.err.println("ExtractChannel2: failed to process input; error - " + e.getMessage() + Throwables.getStackTraceAsString(e));
             return null;
         }
     }
 
     public static int getWeight(String channelInterest, int index)
     {
-        return Math.round((Float.valueOf(channelInterest.substring(index + 1))) * 100);
+        String strWeight = channelInterest.substring(index + 1);
+        Float weight = Float.valueOf(strWeight);
+        return Utils.roundUpToInt(weight);
     }
 
 

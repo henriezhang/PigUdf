@@ -1,5 +1,6 @@
 package com.qq.pig.udf;
 
+import com.google.common.base.Preconditions;
 import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.data.Tuple;
 
@@ -18,5 +19,20 @@ public class Utils
         {
             tuple.set(i, 0);
         }
+    }
+
+    /**
+     * @param value
+     * @return
+     */
+    static int roundUpToInt(Float value)
+    {
+        int normalizedWeight = Math.round(value * 100);
+        if (normalizedWeight > 0)
+            return normalizedWeight;
+        Preconditions.checkState(normalizedWeight == 0);
+        if (value > 0)
+            return 1;
+        return 0;
     }
 }
