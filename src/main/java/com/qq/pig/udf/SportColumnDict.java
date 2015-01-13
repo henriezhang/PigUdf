@@ -1,13 +1,9 @@
 package com.qq.pig.udf;
 
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -114,8 +110,8 @@ public class SportColumnDict
         columnDict.put("run", "run");
     }
 
-    private static final List<String> columns = Lists.newArrayList();
-    private static final Map<String, Integer> columnPositionMap = Maps.newHashMap();
+    private static final List<String> columns = new ArrayList<String>();
+    private static final Map<String, Integer> columnPositionMap = new HashMap<String, Integer>();
 
     static
     {

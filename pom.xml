@@ -6,7 +6,7 @@
 
     <groupId>PigUdf</groupId>
     <artifactId>PigUdf</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.1-alfa-SNAPSHOT</version>
 
 
     <properties>
@@ -18,16 +18,25 @@
         <guava.version>15.0</guava.version>
         <commons-io.version>2.4</commons-io.version>
         <mockito-all.version>1.9.0</mockito-all.version>
-
     </properties>
 
     <dependencies>
-
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>4.3</version>
         </dependency>
+
+        <!--<dependency>-->
+        <!--<groupId>joda-time</groupId>-->
+        <!--<artifactId>joda-time</artifactId>-->
+        <!--<version>1.6</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+        <!--<groupId>log4j</groupId>-->
+        <!--<artifactId>log4j</artifactId>-->
+        <!--<version>1.2.16</version>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>org.apache.pig</groupId>
@@ -52,10 +61,28 @@
         <!--<groupId>io.netty</groupId>-->
         <!--<artifactId>netty</artifactId>-->
         <!--<version>3.7.0.Final</version>-->
-        <!--&lt;!&ndash;<scope>system</scope>&ndash;&gt;-->
-        <!--&lt;!&ndash;<systemPath>${homedir}\netty-3.7.0.Final.jar</systemPath>&ndash;&gt;-->
+        <!--<scope>system</scope>-->
+        <!--<systemPath>${homedir}\netty-3.7.0.Final.jar</systemPath>-->
         <!--</dependency>-->
 
+        <dependency>
+            <groupId>com.linkedin.datafu</groupId>
+            <artifactId>datafu</artifactId>
+            <version>1.2.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-analyzers-common</artifactId>
+            <version>4.3.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-core</artifactId>
+            <version>4.3.0</version>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.hadoop</groupId>
@@ -84,20 +111,40 @@
         <!--<version>${jersey.version}</version>-->
         <!--</dependency>-->
 
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-asl</artifactId>
+            <version>1.8.8</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-core-asl</artifactId>
+            <version>1.8.8</version>
+            <scope>provided</scope>
+        </dependency>
+
         <!--<dependency>-->
         <!--<groupId>org.apache.commons</groupId>-->
         <!--<artifactId>commons-lang3</artifactId>-->
         <!--<version>3.0.1</version>-->
         <!--</dependency>-->
-        <!--&lt;!&ndash;<dependency>&ndash;&gt;-->
-        <!--&lt;!&ndash;<groupId>commons-lang</groupId>&ndash;&gt;-->
-        <!--&lt;!&ndash;<artifactId>commons-lang</artifactId>&ndash;&gt;-->
-        <!--&lt;!&ndash;<version>${commons-lang.version}</version>&ndash;&gt;-->
-        <!--&lt;!&ndash;</dependency>&ndash;&gt;-->
+        <!--<dependency>-->
+        <!--<groupId>commons-lang</groupId>-->
+        <!--<artifactId>commons-lang</artifactId>-->
+        <!--<version>${commons-lang.version}</version>-->
+        <!--</dependency>-->
         <!--<dependency>-->
         <!--<groupId>commons-logging</groupId>-->
         <!--<artifactId>commons-logging</artifactId>-->
         <!--<version>${commons-logging.version}</version>-->
+        <!--</dependency>-->
+
+        <!--<dependency>-->
+        <!--<groupId>org.slf4j</groupId>-->
+        <!--<artifactId>slf4j-api</artifactId>-->
+        <!--<version>1.7.5</version>-->
         <!--</dependency>-->
 
         <!--<dependency>-->
@@ -108,7 +155,6 @@
         <!--<systemPath>${homedir}\ansj_seg-0.9-modifiedv2.jar</systemPath>-->
         <!--</dependency>-->
 
-
         <!--<dependency>-->
         <!--<groupId>org.ansj</groupId>-->
         <!--<artifactId>tree-split</artifactId>-->
@@ -117,13 +163,11 @@
         <!--<systemPath>${homedir}\tree_split-1.0.1.jar</systemPath>-->
         <!--</dependency>-->
 
-
         <!--<dependency>-->
         <!--<groupId>commons-httpclient</groupId>-->
         <!--<artifactId>commons-httpclient</artifactId>-->
         <!--<version>3.1</version>-->
         <!--</dependency>-->
-
 
         <!--<dependency>-->
         <!--<groupId>commons-io</groupId>-->
@@ -150,8 +194,6 @@
             <!--</exclusion>-->
             <!--</exclusions>-->
         </dependency>
-
-
     </dependencies>
 
     <build>
@@ -181,9 +223,6 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
-
     </build>
-
 </project>

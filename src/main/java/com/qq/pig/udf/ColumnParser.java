@@ -1,8 +1,10 @@
 package com.qq.pig.udf;
 
-import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
+//import com.google.common.base.Splitter;
+//import com.google.common.collect.Lists;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -14,10 +16,10 @@ import java.util.List;
 public class ColumnParser
 {
 
-    private static final List<String> EMPTY = Lists.newArrayList();
+    private static final List<String> EMPTY = new ArrayList<String>();
 
 
-    private Splitter splitter = Splitter.on(".");
+//    private Splitter splitter = Splitter.on(".");
 
 
     public List<String> parseColumns(String col)
@@ -31,7 +33,8 @@ public class ColumnParser
             return EMPTY;
 
         String colStr = col.substring(index + 2, endPos);
-        return splitter.splitToList(colStr);
+        String[] temps = colStr.split("\\.");
+        return Arrays.asList(temps);
     }
 
     public static void main(String[] args)

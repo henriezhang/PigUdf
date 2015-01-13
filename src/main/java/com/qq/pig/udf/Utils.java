@@ -35,4 +35,9 @@ public class Utils
             return 1;
         return 0;
     }
+
+    public static void main(String[] args)
+    {
+        System.out.println(roundUpToInt(0.0001f));
+    }
 }

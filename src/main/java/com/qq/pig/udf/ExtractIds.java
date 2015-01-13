@@ -44,7 +44,7 @@ public class ExtractIds extends EvalFunc<DataBag>
                 {
                     if (type == null)
                     {
-                        t.set(index, type);
+                        t.set(index, null);
                     }
                     else
                     {

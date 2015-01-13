@@ -1,9 +1,10 @@
 package com.qq.pig.udf;
 
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
-import com.google.common.base.Throwables;
-import com.google.common.collect.Sets;
+//import com.google.common.base.Splitter;
+//import com.google.common.base.Strings;
+//import com.google.common.base.Throwables;
+//import com.google.common.collect.Sets;
+
 import org.apache.pig.EvalFunc;
 import org.apache.pig.data.*;
 import org.apache.pig.impl.logicalLayer.FrontendException;
@@ -11,9 +12,7 @@ import org.apache.pig.impl.logicalLayer.schema.Schema;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created with IntelliJ IDEA.
@@ -24,7 +23,7 @@ import java.util.Set;
 public class ExtractColumnBag extends EvalFunc<DataBag>
 {
 
-    private Splitter commaSplitter = Splitter.on(",");
+    //    private Splitter commaSplitter = Splitter.on(",");
     private SportColumnDict dict = new SportColumnDict();
     private ColumnParser parser = new ColumnParser();
     private static final String SPORTS = "sports";
@@ -40,7 +39,7 @@ public class ExtractColumnBag extends EvalFunc<DataBag>
         {
             DataBag output = DefaultBagFactory.getInstance().newDefaultBag();
             String columnStr = (String) input.get(0);
-            if (Strings.isNullOrEmpty(columnStr))
+            if (columnStr == null || columnStr.equals(""))
                 return null;
             List<String> columns = parser.parseColumns(columnStr);
             if (columns.size() == 0 || !columns.get(0).equals(SPORTS))//only accept sports column

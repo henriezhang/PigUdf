@@ -1,5 +1,6 @@
 package com.qq.pig.udf;
 
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,10 +14,15 @@ public class RegexTest
 {
     public static void main(String[] args)
     {
-        Pattern urlPattern = Pattern.compile("^\\d{5,}$");
+//        Pattern urlPattern = Pattern.compile("^\\d{5,}$");
+//
+//        Matcher matcher = urlPattern.matcher("100111111112222");
+//
+//        Date date = new Date();
+//        date.getTime();
+//        System.out.println(matcher.matches());
 
-        Matcher matcher = urlPattern.matcher("100111111112222");
-
-        System.out.println(matcher.matches());
+        String str = "123+1234+";
+        String[] r = str.split("\\+");
     }
 }

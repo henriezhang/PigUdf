@@ -34,7 +34,7 @@ public class PriceLevel
         prices.add(80l);//13
         prices.add(90l);//14
         prices.add(100l);//15
-        prices.add(Long.MAX_VALUE);
+        prices.add(Long.MAX_VALUE);//16
     }
 
     public int getLevel(double price)
